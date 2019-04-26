@@ -26,6 +26,15 @@ def print_formatted_card(response):
     print(get_card_cost(response))
     print(get_card_type(response))
     print(get_card_text(response))
+
+    power_toughness_or_loyalty = get_card_power_toughness_or_loyalty(response)
+    if power_toughness_or_loyalty is not None:
+        print(power_toughness_or_loyalty)
+
+    card_flavor_text = get_card_flavor_text(response)
+    if card_flavor_text is not None:
+        print(get_card_flavor_text(response))
+
     print('\n ______________________________________________________________ \n')
 
 
@@ -43,6 +52,18 @@ def get_card_text(response):
 
 def get_card_cost(response):
     return response.xpath('//td[@colspan="2" and @valign="top"]/text()').getall()[1].strip()
+
+
+# Note: If the card is a planeswalker, this function returns the loyalty
+def get_card_power_toughness_or_loyalty(response):
+    # TODO: Implement some workaround so I don't add whitespace by printing nothing if card has no p/t
+    return response.xpath('normalize-space(//td/font[contains(comment(), "P/T")]/text()[2])').get()
+
+
+def get_card_flavor_text(response):
+    # TODO: Implement some workaround so I don't add whitespace by printing nothing if card has no flavor text
+    response.xpath(
+        'normalize-space(//tr/td/i[contains(comment(), "FLAVOR TEXT")]/text()[2])').get()
 
 
 def get_daily_spoilers(response):
